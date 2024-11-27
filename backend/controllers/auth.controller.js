@@ -1,7 +1,11 @@
-import { User } from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
+import crypto from "crypto";
+
+
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
+import { sendPasswordResetEmail, sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
+
+import { User } from "../models/user.model.js";
 
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -71,13 +75,13 @@ export const verifyEmail = async(req,res)=>{
     await user.save();
     await sendWelcomeEmail(user.email,user.name);
     
-    res.status(200).json({success:true,message:"Email Varified successfully", user:{
+    res.status(200).json({success:true,message:"Email Verified successfully", user:{
       ...user._doc,
       password:undefined,
     } })
 
   } catch (error) {
-    console.log("Error in Varifing Eamil: ",error);
+    console.log("failed to verifi Eamil: ",error);
     res.status(400).json({ success: false, message: "server Error" });
   }
 }
@@ -90,6 +94,7 @@ export const login = async (req, res) => {
         res.status(400).json({success:false , message:"invalid credentials"})
       }
       const isPasswordvalid = await bcryptjs.compare(password,user.password);
+      
       if(!isPasswordvalid){
         res.status(400).json({success:false , message:"invalid email or passowrd"})
       }
@@ -118,4 +123,34 @@ export const logout = async (req, res) => {
     res.status(200).json({success:true,message:"Logged Out Successfully"})
 };
 
+export const forgotPassword = async (req,res)=>{
+    const {email}= req.body
+    try {
+      const user = await User.findOne({email});
+      if(!user){
+        return res.status(400).json({success:false,message:"User not found"});
+      }
 
+      // Generate reset Token 
+      const resetToken = crypto.randomBytes(20).toString("hex");
+  const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
+
+  user.resetpasswordToken = resetToken
+  user.resetpasswordExpiresAt = resetTokenExpiresAt;
+  await user.save();
+
+  // send email
+
+  await sendPasswordResetEmail(user.email,`${process.env.CLIENT_URL}/reset-password/${resetToken}`)
+ 
+  res.status(200).json({success:true,message:"Password reset link send to your email"});
+
+
+  } catch (error) {
+    console.error("Error in forgoting password: ",error);
+    return res.status(400).json({success:false,message: error.message})
+    }
+}
+
+
+// 1:31:13
