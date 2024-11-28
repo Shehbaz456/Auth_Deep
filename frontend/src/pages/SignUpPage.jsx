@@ -10,7 +10,8 @@ const SignUpPage = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	// const navigate = useNavigate();
+	const isLoading = false;
+	const navigate = useNavigate();
 
 	// const { signup, error, isLoading } = useAuthStore();
 
@@ -19,7 +20,7 @@ const SignUpPage = () => {
 
 		// try {
 		// 	await signup(email, password, name);
-		// 	navigate("/verify-email");
+			navigate("/verify-email");
 		// } catch (error) {
 		// 	console.log(error);
 		// }
@@ -70,10 +71,10 @@ const SignUpPage = () => {
 						whileHover={{ scale: 1.02 }}
 						whileTap={{ scale: 0.98 }}
 						type='submit'
-						// disabled={isLoading}
+						disabled={isLoading}
 					>
-						{/* {isLoading ? <Loader className=' animate-spin mx-auto' size={24} /> : "Sign Up"} */}
-            Signup
+						{isLoading ? <Loader className=' animate-spin mx-auto' size={24} /> : "Sign Up"}
+            
 					</motion.button>
 				</form>
 			</div>
