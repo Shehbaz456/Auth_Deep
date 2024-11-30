@@ -1,10 +1,12 @@
 import { Route,Routes } from "react-router-dom"
+
+import { Toaster } from "react-hot-toast";
+
 import FloatingShape from "./components/FloatingShape"
 import SignUpPage from "./pages/SignUpPage"
 import LoginPage from "./pages/LoginPage"
 import DashboardPage from "./pages/DashboardPage"
 import EmailVerificationPage from "./pages/EmailVerificationPage"
-
 
 function App() {
   return (
@@ -23,7 +25,7 @@ function App() {
     
       
       </Routes>
-
+      <Toaster />
   </div>
   )
 }
