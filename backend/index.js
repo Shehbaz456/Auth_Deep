@@ -1,6 +1,7 @@
 // const express = require("express");
 import dotenv from "dotenv"
 dotenv.config();
+import cors from "cors"
 import cookieParser from "cookie-parser";
 import express from "express";
 import { connectDB } from "./db/connectDB.js";
@@ -10,6 +11,10 @@ const app = express()
 const PORT = process.env.PORT || 8000;
 // console.log( process.env.PORT);
 
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
+}))
 app.use(express.json()); //  allows us to parse incoming requests: req.body
 app.use(cookieParser()); // allows us to parse incoming cookies  
 
